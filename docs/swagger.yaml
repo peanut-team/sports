@@ -1,0 +1,46 @@
+definitions:
+  account.User:
+    properties:
+      email:
+        description: 邮箱
+        example: 123@ee.com
+        type: string
+      password:
+        description: 密码
+        example: 123@password
+        type: string
+      username:
+        description: 用户名
+        example: mick
+        type: string
+    type: object
+  errs.BasicError:
+    properties:
+      code:
+        type: string
+      msg:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/mc/v1/account/:username:
+    get:
+      description: 传入 username，根据用户名查询用户
+      parameters:
+      - description: nick
+        in: path
+        name: username
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/account.User'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.BasicError'
+      summary: 获取用户信息
+swagger: "2.0"

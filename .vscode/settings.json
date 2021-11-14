@@ -1,0 +1,21 @@
+{
+  "go.inferGopath": false,
+  "go.autocompleteUnimportedPackages": true,
+  "go.useLanguageServer": true,
+  "go.lintTool": "golangci-lint",
+  "go.docsTool": "godoc",
+  "go.buildFlags": [
+  ],
+  "go.lintFlags": [],
+  "go.vetFlags": [],
+  "go.gocodePackageLookupMode": "go",
+  "go.gotoSymbol.includeImports": true,
+  "go.useCodeSnippetsOnFunctionSuggest": true,
+  "go.useCodeSnippetsOnFunctionSuggestWithoutType": true,
+  "go.formatTool": "goreturns", 
+  "go.gocodeAutoBuild": false,
+  "go.liveErrors": {
+      "enabled": true,
+      "delay": 0
+  }
+}

@@ -1,0 +1,20 @@
+version: '3.1'
+services:
+  mariadb:
+    image: mariadb:10.5
+    container_name: "mariadb_10-5"
+    restart: always
+    environment:
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "123456" # 生产环境需要更安全的密码
+      MYSQL_ROOT_PASSWORD: "123456" # 生产环境需要更安全的密码
+      TZ: "Asia/Shanghai"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mariadb/init:/docker-entrypoint-initdb.d
+      # - ./mariadb/data:/var/lib/mysql
+      - ./mariadb/log:/var/log/mysql
+      - ./mariadb/conf/my.cnf:/etc/mysql/my.cnf
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    # command 覆盖容器启动后默认执行的命令，相当于docker run xxx /bin/bash里面最后一段命令。

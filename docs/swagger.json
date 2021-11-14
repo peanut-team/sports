@@ -1,0 +1,70 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/api/mc/v1/account/:username": {
+            "get": {
+                "description": "传入 username，根据用户名查询用户",
+                "summary": "获取用户信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "nick",
+                        "name": "username",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/account.User"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errs.BasicError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "account.User": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "邮箱",
+                    "type": "string",
+                    "example": "123@ee.com"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string",
+                    "example": "123@password"
+                },
+                "username": {
+                    "description": "用户名",
+                    "type": "string",
+                    "example": "mick"
+                }
+            }
+        },
+        "errs.BasicError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
