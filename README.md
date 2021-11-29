@@ -21,13 +21,46 @@ mv $SWAGPATH/cmd/swag/swag.exe $GOPATH
 ```bash
 # 数据库
 ## 生成镜像
-docker-compose build --no-cache
+docker-compose -f docker-compose-db.yaml build mariadb --no-cache
 ## 运行
-docker-compose up -d
+docker-compose -f docker-compose-db.yaml up -d mariadb
 
-## or make
-make mysql.up
-make mysql.down
+## 停止
+docker-compose -f docker-compose-db.yaml down mariadb
+```
+
+#### emq
+```bash
+docker-compose -f docker-compose-emq.yaml -p my_emqx up -d
+# 查看集群状态
+docker exec -it my_emqx_emqx1_1 sh -c "emqx_ctl cluster status"
+
+# 停止
+docker-compose -f docker-compose-emq.yaml -p my_emqx down
+```
+#### redis
+```bash
+# 运行
+docker-compose -f docker-compose-redis.yaml up -d
+
+# 停止
+docker-compose -f docker-compose-redis.yaml down
+
+#redis的认证密码一般配置在配置文件的requirepass字段。如果不使用配置文件，可以使用 command: redis-server --requirepass yourpass 配置认证密码；
+```
+
+#### rabbitmq
+```bash
+## 运行
+docker-compose -f docker-compose-rabbitmq.yaml up -d
+
+## 停止
+docker-compose -f docker-compose-rabbitmq.yaml down
+
+## 启动监控插件
+docker-compose -f docker-compose-rabbitmq.yaml ps
+docker exec -it 容器Name /bin/bash
+rabbitmq-plugins enable rabbitmq_management # 在容器中执行
 ```
 
 ### 运行
@@ -36,6 +69,10 @@ go run main.go
 
 # or run make
 make run
+
+# docker-composer run
+docker-compose -f docker-compose-api-server.yaml up -d
+docker-compose -f docker-compose-api-server.yaml down
 ```
 
 ### 单元测试
@@ -48,3 +85,11 @@ make test
 make lint
 make format
 ```
+
+
+## 基本方案
+IOT --> Mqtt --> Redis --> API Server  --> Fronted
+          |
+          |
+          DB
+

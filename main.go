@@ -9,6 +9,7 @@ import (
 	"sports/pkg/common/server"
 	"sports/pkg/ctr"
 	"sports/pkg/logger"
+	"sports/pkg/notifier"
 )
 
 func main() {
@@ -33,6 +34,9 @@ func main() {
 	if err := ctr.InitDatabase(&cfg.Mysql); err != nil {
 		panic("mysql配置加载失败：" + err.Error())
 	}
+
+	notifier.InitNotifier()
+
 
 	// init gin
 	engine := server.NewGinEngine(

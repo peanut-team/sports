@@ -3,6 +3,7 @@ package internal
 import (
 	_ "sports/docs" // 这里需要引入本地已生成文档
 	accountCtr "sports/internal/account/controller"
+	coachCtr "sports/internal/coach/controller"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -10,7 +11,7 @@ import (
 )
 
 const (
-	Prefix = "/api/mc/v1/" // route prefix
+	Prefix = "/api/v1/" // route prefix
 )
 
 func RouteApi(g *gin.Engine) {
@@ -21,4 +22,11 @@ func RouteApi(g *gin.Engine) {
 	{
 		accountRoute.GET("/:username", accountCtr.GetUser) // 用户列表
 	}
+
+	coachRoute := baseRoute.Group("/coach")
+	{
+		coachRoute.GET("/training", coachCtr.GetLiveTraining)
+	}
+
+
 }

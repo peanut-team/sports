@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  api-server:
+    image: maxwit.com/maxwit/sports-api-service:0.1.0
+    hostname: api-server
+    container_name: "api-server"
+    restart: always
+    ports:
+      - "8080:8080"

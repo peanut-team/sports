@@ -32,6 +32,29 @@
                     }
                 }
             }
+        },
+        "/api/v1/coach/training": {
+            "get": {
+                "description": "实时训练数据",
+                "summary": "获取实时训练数据",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/coach.AthleteTraining"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errs.BasicError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -52,6 +75,58 @@
                     "description": "用户名",
                     "type": "string",
                     "example": "mick"
+                }
+            }
+        },
+        "coach.AthleteTraining": {
+            "type": "object",
+            "properties": {
+                "acceleration": {
+                    "description": "功率（加速度）",
+                    "type": "number"
+                },
+                "athlete_id": {
+                    "description": "运动员ID",
+                    "type": "integer"
+                },
+                "athlete_name": {
+                    "description": "运动员姓名",
+                    "type": "string"
+                },
+                "athlete_training_status": {
+                    "type": "boolean"
+                },
+                "average_speed": {
+                    "description": "平均时速",
+                    "type": "number"
+                },
+                "distance": {
+                    "description": "距离（路程）",
+                    "type": "number"
+                },
+                "instantaneous_propeller_speed": {
+                    "description": "瞬时桨速",
+                    "type": "number"
+                },
+                "instantaneous_speed": {
+                    "description": "瞬时时速",
+                    "type": "number"
+                },
+                "sport_img": {
+                    "description": "运动员头像",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "当前状态",
+                    "type": "string"
+                },
+                "stroke": {
+                    "description": "划行距离",
+                    "type": "number"
+                },
+                "total_oars": {
+                    "description": "总桨数",
+                    "type": "integer"
                 }
             }
         },

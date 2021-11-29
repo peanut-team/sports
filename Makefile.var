@@ -1,0 +1,5 @@
+VERSION ?= 0.1.0
+
+PROD_NAME ?= sports
+HUB ?= maxwit.com/maxwit
+GOPROXY ?= https://goproxy.cn,direct
