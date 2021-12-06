@@ -225,6 +225,35 @@ var doc = `{
                 }
             }
         },
+        "/api/v1/auth/current-user": {
+            "get": {
+                "description": "根据 HTTP Header Token 获取当前用户信息，需要在头部添加 Authorization",
+                "summary": "根据 HTTP Header Token 获取当前用户信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "授权 token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/account.User"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errs.BasicError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/coach/training": {
             "get": {
                 "description": "实时训练数据",
@@ -250,6 +279,17 @@ var doc = `{
         }
     },
     "definitions": {
+        "account.AuthInfo": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/account.UserItem"
+                }
+            }
+        },
         "account.User": {
             "type": "object",
             "properties": {

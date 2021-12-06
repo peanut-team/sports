@@ -1,4 +1,11 @@
 definitions:
+  account.AuthInfo:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/account.UserItem'
+    type: object
   account.User:
     properties:
       email:
@@ -235,6 +242,25 @@ paths:
           schema:
             $ref: '#/definitions/errs.BasicError'
       summary: 更新用户信息
+  /api/v1/auth/current-user:
+    get:
+      description: 根据 HTTP Header Token 获取当前用户信息，需要在头部添加 Authorization
+      parameters:
+      - description: 授权 token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/account.User'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.BasicError'
+      summary: 根据 HTTP Header Token 获取当前用户信息
   /api/v1/coach/training:
     get:
       description: 实时训练数据
