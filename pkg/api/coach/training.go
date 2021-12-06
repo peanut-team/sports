@@ -21,5 +21,5 @@ type AthleteTraining struct {
 	InstantaneousPropellerSpeed float64         `json:"instantaneous_propeller_speed"` // 瞬时桨速
 	Stroke                      float64         `json:"stroke"`                        // 划行距离
 	Acceleration                float64         `json:"acceleration"`                  // 功率（加速度）
-	TrainingStatus              bool            `json:"athlete_training_status"`
+	TrainingStatus              bool            `json:"athlete_training_status"`  //
 }

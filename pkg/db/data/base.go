@@ -9,14 +9,14 @@ type AutoID struct {
 }
 
 type SingleTimestamp struct {
-	CreateTime       base.Time `json:"create_time" gorm:"type:datetime;not null;"`
-	LastModifiedTime base.Time `json:"last_modified_time" gorm:"type:datetime;"`
+	CreateTime       *base.Time `json:"create_time" gorm:"type:datetime;not null;"`
+	LastModifiedTime *base.Time `json:"last_modified_time" gorm:"type:datetime;"`
 }
 
 type BaseTimestamp struct {
-	CreateTime       base.Time `json:"create_time" gorm:"type:datetime;not null;"`
+	CreateTime       *base.Time `json:"create_time" gorm:"type:datetime;not null;"`
 	CreateBy         string    `json:"create_by" gorm:"size:20;not null;"`
-	LastModifiedTime base.Time `json:"last_modified_time" gorm:"type:datetime;"`
+	LastModifiedTime *base.Time `json:"last_modified_time" gorm:"type:datetime;"`
 	LastModifiedBy   string    `json:"last_modified_by" gorm:"size:20;"`
 }
 

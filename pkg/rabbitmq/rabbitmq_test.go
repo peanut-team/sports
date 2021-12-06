@@ -7,8 +7,12 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
 	"log"
+	"math/rand"
+	"os"
+	"os/signal"
 	"sports/pkg/api/coach"
 	"testing"
+	"time"
 )
 
 var username = "root"
@@ -57,27 +61,64 @@ func TestPub(t *testing.T) {
 	err = ch.QueueBind(q.Name, *routing, *exchange, false, nil)
 	assert.NoError(t, err)
 
-	// 向服务端发送message
-	data := &coach.AthleteTraining{
-		AthleteID: 2,
-		Status:    coach.SportsmanStatus_Online,
+	// 用来接收命令行的终止信号
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt)
+
+	ticker := time.NewTicker(time.Second * 10)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case _ = <-ticker.C:
+			aa := []int{1,2,3}
+			for _, a := range aa {
+				// 向服务端发送message
+				t := rand.Intn(100)
+				data := &coach.AthleteTraining{
+					SportImg:                    "https://pic1.zhimg.com/80/v2-6c5ff4ef0bb78991ed03ab720f1b2447_720w.jpg?source=1940ef5c",
+					AthleteID:                   a,
+					AthleteName:                 fmt.Sprintf("test-%d", a),
+					Status:                      coach.SportsmanStatus_Online,
+					Distance:                    10.1 + float64(t),
+					InstantaneousSpeed:          39.33 + float64(t),
+					AverageSpeed:                56.8 + float64(t),
+					TotalOars:                   5 + int32(t),
+					InstantaneousPropellerSpeed: 34 + float64(t),
+					Stroke:                      66.3 + float64(t),
+					Acceleration:                1.5 + float64(t),
+					TrainingStatus:              true,
+				}
+
+
+				body,_  := json.Marshal(data)
+				// 4.将消息发布到声明的队列
+				err = ch.Publish(
+					*exchange,     // exchange
+					"test.1", // routing key
+					false,  // mandatory
+					false,  // immediate
+					amqp.Publishing{
+						ContentType: "text/plain",
+						Body:        []byte(body),
+					})
+				if err != nil {
+					log.Fatalf("Failed to publish a message: %v", err)
+					return
+				}
+				log.Printf(" [x] Sent %s", body)
+			}
+
+
+		case <-interrupt:
+			log.Println("interrupt")
+
+			select {
+			case <-time.After(time.Second):
+			}
+			return
+		}
 	}
-	body,_  := json.Marshal(data)
-	// 4.将消息发布到声明的队列
-	err = ch.Publish(
-		*exchange,     // exchange
-		"test.1", // routing key
-		false,  // mandatory
-		false,  // immediate
-		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(body),
-		})
-	if err != nil {
-		log.Fatalf("Failed to publish a message: %v", err)
-		return
-	}
-	log.Printf(" [x] Sent %s", body)
 }
 
 func TestSub(t *testing.T) {

@@ -23,17 +23,190 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/mc/v1/account/:username": {
+        "/api/mc/v1/accounts/:user_id": {
             "get": {
                 "description": "传入 username，根据用户名查询用户",
                 "summary": "获取用户信息",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "nick",
-                        "name": "username",
+                        "type": "integer",
+                        "description": "用户ID",
+                        "name": "user_id",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/account.User"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errs.BasicError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/account/users": {
+            "get": {
+                "description": "传入 page 参数，查询用户列表",
+                "summary": "获取用户列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "total",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controller.UserListResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errs.BasicError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "添加用户",
+                "summary": "添加用户",
+                "parameters": [
+                    {
+                        "description": "用户信息",
+                        "name": "account.User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/account.User"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errs.BasicError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/account/users/:user_id": {
+            "put": {
+                "description": "更新用户信息",
+                "summary": "更新用户信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "用户信息",
+                        "name": "account.User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/account.User"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errs.BasicError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除用户",
+                "summary": "删除用户",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "用户信息",
+                        "name": "account.User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errs.BasicError"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "更新用户密码",
+                "summary": "更新用户密码",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "用户信息",
+                        "name": "account.User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/account.User"
+                        }
                     }
                 ],
                 "responses": {
@@ -85,15 +258,44 @@ var doc = `{
                     "type": "string",
                     "example": "123@ee.com"
                 },
+                "id": {
+                    "description": "用户 ID",
+                    "type": "integer"
+                },
                 "password": {
                     "description": "密码",
                     "type": "string",
                     "example": "123@password"
                 },
+                "user_type": {
+                    "description": "用户类型；0 为教练，1为学员",
+                    "type": "integer"
+                },
                 "username": {
                     "description": "用户名",
                     "type": "string",
                     "example": "mick"
+                }
+            }
+        },
+        "account.UserItem": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "邮箱",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "用户 ID",
+                    "type": "integer"
+                },
+                "user_type": {
+                    "description": "用户类型；0 为教练，1为学员",
+                    "type": "integer"
+                },
+                "username": {
+                    "description": "用户名",
+                    "type": "string"
                 }
             }
         },
@@ -149,6 +351,22 @@ var doc = `{
                 }
             }
         },
+        "controller.UserListResp": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "description": "对象列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/account.UserItem"
+                    }
+                },
+                "paginate": {
+                    "description": "Page",
+                    "$ref": "#/definitions/page.Paginate"
+                }
+            }
+        },
         "errs.BasicError": {
             "type": "object",
             "properties": {
@@ -157,6 +375,20 @@ var doc = `{
                 },
                 "msg": {
                     "type": "string"
+                }
+            }
+        },
+        "page.Paginate": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         }
