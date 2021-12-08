@@ -32,10 +32,10 @@ func RouteApi(g *gin.Engine) {
 	{
 		// internal login
 		authRoute.GET("/current-user", accountCtr.GetUserByToken)  // 根剧 token 获取用户
-		authRoute.GET("/users/:username/tokens", accountCtr.Login) // 用户登录
+		authRoute.GET("/users/tokens", accountCtr.Login) // 用户登录
 	}
 
-	coachRoute := baseRoute.Group("/coach").Use(accountCtr.Auth)
+	coachRoute := baseRoute.Group("/coach")
 	{
 		coachRoute.GET("/training", coachCtr.GetLiveTraining)
 	}

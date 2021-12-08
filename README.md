@@ -70,6 +70,9 @@ go run main.go
 # or run make
 make run
 
+#build docker 
+make build 
+
 # docker-composer run
 docker-compose -f docker-compose-api-server.yaml up -d
 docker-compose -f docker-compose-api-server.yaml down

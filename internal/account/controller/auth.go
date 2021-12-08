@@ -62,7 +62,7 @@ func Auth(ctx *gin.Context) {
 // @Param account.LoginInfo	query	account.LoginInfo true  "用户登录信息"
 // @Success 200 {object} account.AuthInfo
 // @Failure 500 {object} errs.BasicError
-// @Router  /api/v1/account/users [post]
+// @Router  /api/v1/auth/users/tokens [get]
 func Login(ctx *gin.Context) {
 	var loginInfo account.LoginInfo
 	if err := ctx.ShouldBind(&loginInfo); err != nil {

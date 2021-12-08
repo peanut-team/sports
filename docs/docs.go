@@ -132,11 +132,11 @@ var doc = `{
                     },
                     {
                         "description": "用户信息",
-                        "name": "account.User",
+                        "name": "UpdateUserReq",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/account.User"
+                            "$ref": "#/definitions/controller.UpdateUserReq"
                         }
                     }
                 ],
@@ -165,15 +165,6 @@ var doc = `{
                         "name": "user_id",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "description": "用户信息",
-                        "name": "account.User",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/account.User"
-                        }
                     }
                 ],
                 "responses": {
@@ -201,11 +192,11 @@ var doc = `{
                     },
                     {
                         "description": "用户信息",
-                        "name": "account.User",
+                        "name": "UpdateUserPWDReq",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/account.User"
+                            "$ref": "#/definitions/controller.UpdateUserPWDReq"
                         }
                     }
                 ],
@@ -243,6 +234,46 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/account.User"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/errs.BasicError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/users/tokens": {
+            "get": {
+                "description": "登录，输入用户 ID，用户密码获取授权 Token",
+                "summary": "登录",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户 ID",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "用户类型；0 为教练，1为学员",
+                        "name": "userType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/account.AuthInfo"
                         }
                     },
                     "500": {
@@ -388,6 +419,39 @@ var doc = `{
                 "total_oars": {
                     "description": "总桨数",
                     "type": "integer"
+                }
+            }
+        },
+        "controller.UpdateUserPWDReq": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "用户 ID",
+                    "type": "integer"
+                },
+                "password": {
+                    "description": "密码",
+                    "type": "string",
+                    "example": "123@password"
+                }
+            }
+        },
+        "controller.UpdateUserReq": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "邮箱",
+                    "type": "string",
+                    "example": "123@ee.com"
+                },
+                "id": {
+                    "description": "用户 ID",
+                    "type": "integer"
+                },
+                "username": {
+                    "description": "用户名",
+                    "type": "string",
+                    "example": "mick"
                 }
             }
         },

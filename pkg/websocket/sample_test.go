@@ -30,9 +30,8 @@ func Test_client(t *testing.T) {
 	signal.Notify(interrupt, os.Interrupt)
 
 	// 和服务端建立连接
-	u := url.URL{Scheme: "ws", Host: *addr, Path: "/api/v1/coach/training"}
+	u := url.URL{Scheme: "ws", Host: *addr, Path: "/api/v1/coach/training", RawQuery: "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyIjp7ImlkIjoxLCJ1c2VybmFtZSI6IiJ9fQ.rA0c4qGnhAeD6pirAPu9JALgr55Qbz0C52LdF0h5gGU"}
 	log.Printf("connecting to %s", u.String())
-
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
 		log.Fatal("dial:", err)

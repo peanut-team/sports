@@ -45,8 +45,7 @@ type UserItem struct {
 }
 
 type LoginInfo struct {
-	ID int32 `form:"id"` // 用户 ID
-	//Username string   `form:"username"`  // 用户名
+	ID       int32    `form:"id"`        // 用户 ID
 	Password string   `form:"password"`  // 密码
 	UserType UserType `form:"user_type"` // 用户类型；0 为教练，1为学员
 }

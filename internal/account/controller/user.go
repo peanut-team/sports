@@ -97,10 +97,16 @@ func AddUser(ctx *gin.Context) {
 	ctr.Success(ctx, result)
 }
 
+type UpdateUserReq struct {
+	ID       int32  `json:"id,omitempty"`               // 用户 ID
+	Username string `json:"username" example:"mick"`    // 用户名
+	Email    string `json:"email" example:"123@ee.com"` // 邮箱
+}
+
 // @summary 更新用户信息
 // @Description 更新用户信息
 // @Param user_id	path	int	true	"用户ID"
-// @Param account.User	body	account.User true  "用户信息"
+// @Param UpdateUserReq	body	UpdateUserReq true  "用户信息"
 // @Success 200 {object} account.User
 // @Failure 500 {object} errs.BasicError
 // @Router  /api/v1/account/users/:user_id [put]
@@ -138,10 +144,15 @@ func UpdateUser(ctx *gin.Context) {
 	ctr.Success(ctx, result)
 }
 
+type UpdateUserPWDReq struct {
+	ID       int32  `json:"id,omitempty"`                              // 用户 ID
+	Password string `json:"password,omitempty" example:"123@password"` // 密码
+}
+
 // @summary 更新用户密码
 // @Description 更新用户密码
 // @Param user_id	path	int	true	"用户ID"
-// @Param account.User	body	account.User true  "用户信息"
+// @Param UpdateUserPWDReq	body	UpdateUserPWDReq true  "用户信息"
 // @Success 200 {object} account.User
 // @Failure 500 {object} errs.BasicError
 // @Router  /api/v1/account/users/:user_id [PATCH]
@@ -186,7 +197,6 @@ func UpdateUserPWD(ctx *gin.Context) {
 // @summary 删除用户
 // @Description 删除用户
 // @Param user_id	path	int	true	"用户ID"
-// @Param account.User	body	account.User true  "用户信息"
 // @Success 200
 // @Failure 500 {object} errs.BasicError
 // @Router  /api/v1/account/users/:user_id [delete]

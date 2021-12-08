@@ -2,7 +2,7 @@ secret: default-token
 server:
   port: 8080
 mysql:
-  host: 127.0.0.1
+  host: 121.199.27.6
   port: 3306
   username: root
   password: maxwit2021
