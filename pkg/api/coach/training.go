@@ -10,8 +10,9 @@ const (
 
 type AthleteTrainingList []*AthleteTraining
 type AthleteTraining struct {
+	StartTime                   int64           `json:"start_time"`                    // 运动员开始运动的时间戳
 	SportImg                    string          `json:"sport_img"`                     // 运动员头像
-	AthleteID                   int           `json:"athlete_id"`                    // 运动员ID
+	AthleteID                   int             `json:"athlete_id"`                    // 运动员ID
 	AthleteName                 string          `json:"athlete_name"`                  // 运动员姓名
 	Status                      SportsmanStatus `json:"status"`                        // 当前状态
 	Distance                    float64         `json:"distance"`                      // 距离（路程）
@@ -21,5 +22,5 @@ type AthleteTraining struct {
 	InstantaneousPropellerSpeed float64         `json:"instantaneous_propeller_speed"` // 瞬时桨速
 	Stroke                      float64         `json:"stroke"`                        // 划行距离
 	Acceleration                float64         `json:"acceleration"`                  // 功率（加速度）
-	TrainingStatus              bool            `json:"athlete_training_status"`  //
+	TrainingStatus              bool            `json:"athlete_training_status"`       //
 }

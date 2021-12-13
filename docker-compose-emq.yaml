@@ -2,7 +2,7 @@ version: '3'
 
 services:
   emqx1:
-    image: emqx/emqx:v4.0.0
+    image: emqx/emqx-ee:4.3.5
     environment:
       - "EMQX_NAME=emqx"
       - "EMQX_HOST=node1.emqx.io"
@@ -12,6 +12,7 @@ services:
       - "EMQX_MQTT__MAX_TOPIC_ALIAS=10"
     volumes:
       - ./dev_run/emqx/emqx.lic:/opt/emqx/etc/emqx.lic
+      - ./dev_run/emqx/emqx.key:/opt/emqx/etc/emqx.key
     ports:
       - 1883:1883
       - 8083:8083

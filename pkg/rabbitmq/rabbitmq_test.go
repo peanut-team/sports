@@ -67,6 +67,7 @@ func TestPub(t *testing.T) {
 
 	ticker := time.NewTicker(time.Second * 10)
 	defer ticker.Stop()
+	now := time.Now().Unix()
 
 	for {
 		select {
@@ -75,7 +76,9 @@ func TestPub(t *testing.T) {
 			for _, a := range aa {
 				// 向服务端发送message
 				t := rand.Intn(100)
+				d := a * 10
 				data := &coach.AthleteTraining{
+					StartTime: now + int64(d),
 					SportImg:                    "https://pic1.zhimg.com/80/v2-6c5ff4ef0bb78991ed03ab720f1b2447_720w.jpg?source=1940ef5c",
 					AthleteID:                   a,
 					AthleteName:                 fmt.Sprintf("test-%d", a),
