@@ -2,10 +2,16 @@ package notifier
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"github.com/streadway/amqp"
+	"sports/internal/account/service"
 	"sports/pkg/api/coach"
 	"sports/pkg/logger"
+)
+
+var (
+	cRouting = "game_user_data_upload_route"
+	cQueue   = "game_user_data_upload_queue"
 )
 
 // Consumer is listening RabbitMQ and send messages to Registry
@@ -31,7 +37,6 @@ func (c *Consumer) Run() {
 	c.connection = conn
 
 	go c.GetMessages()
-	//go c.publishMessages()
 }
 
 // GetMessages listens RabbitMQ and send new messages into Messages channel
@@ -39,15 +44,16 @@ func (c *Consumer) GetMessages() {
 	channel := c.GetChannel()
 	defer channel.Close()
 
-	err := channel.ExchangeDeclare(*exchange, "topic", false, false, false, false, nil)
-	checkError(err)
-	for message := range c.GetDeliveries(*queue, *routing, channel) {
+	for message := range c.GetDeliveries(channel) {
 		parsedMessage, err := ParseMessage(message)
 		if err != nil {
 			logger.Error(err)
 			continue
 		}
-		c.Messages <- *parsedMessage
+		if parsedMessage != nil {
+			logger.Infof("sub mq data: %v", parsedMessage)
+			c.Messages <- *parsedMessage
+		}
 	}
 }
 
@@ -62,19 +68,13 @@ func (c *Consumer) GetChannel() *amqp.Channel {
 
 func checkError(err error) {
 	if err != nil {
-		logger.Infof("Check your RabbitMQ connection!")
+		logger.Errorf("Check your RabbitMQ connection! err: %#v", err)
 	}
 }
 
 // GetDeliveries returns channel with messages from RabbitMQ, for particular queue
-func (c *Consumer) GetDeliveries(qname, routing string, channel *amqp.Channel) <-chan amqp.Delivery {
-	queue, err := channel.QueueDeclare(qname, false, false, false, false, nil)
-	checkError(err)
-
-	err = channel.QueueBind(queue.Name, routing, *exchange, false, nil)
-	checkError(err)
-
-	deliveries, err := channel.Consume(queue.Name, "", false, false, false, false, nil)
+func (c *Consumer) GetDeliveries(channel *amqp.Channel) <-chan amqp.Delivery {
+	deliveries, err := channel.Consume(cQueue, "", false, false, false, false, nil)
 	checkError(err)
 	return deliveries
 }
@@ -82,11 +82,44 @@ func (c *Consumer) GetDeliveries(qname, routing string, channel *amqp.Channel) <
 // ParseMessage parses amqp.Delivery and returns Message instance
 func ParseMessage(message amqp.Delivery) (*coach.AthleteTraining, error) {
 	message.Ack(false)
-	matches := re.FindStringSubmatch(message.RoutingKey)
-	if len(matches) == 0 {
-		return nil, errors.New("Unknown routing key ")
+	source := &UploadData{}
+	err := json.Unmarshal(message.Body, source)
+	if err != nil {
+		return nil, err
 	}
-	result := &coach.AthleteTraining{}
-	err := json.Unmarshal(message.Body, result)
+	if source.UserId == 0 {
+		return nil, nil
+	}
+	// trans model
+	result, err := NewAthleteTraining(source)
+
 	return result, err
+}
+
+type UploadData struct {
+	UserId       int                   `json:"userId"`       // 用户ID
+	Status       coach.SportsmanStatus `json:"status"`       // 离线：0，在线：1，训练中：2
+	Distance     float64               `json:"distance"`     // 学员训练距离，单位：m
+	PotSpeed     float64               `json:"spotSpeed"`    // 加速度，单位：m/s2（米每二次方秒）
+	AvguserSpeed float64               `json:"avguserSpeed"` // 平均速度，单位：m/s
+	NotifyTime   int64                 `json:"notifyTime"`   // 开始时间
+}
+
+func NewAthleteTraining(data *UploadData) (*coach.AthleteTraining, error) {
+	// query user info
+	user, err := service.GetUser(data.UserId)
+	if err != nil {
+		return nil, fmt.Errorf("can not fetch user[%d], err: %v", data.UserId, err)
+	}
+	return &coach.AthleteTraining{
+		StartTime: data.NotifyTime,
+		// TODO change
+		SportImg:           "https://pic1.zhimg.com/80/v2-6c5ff4ef0bb78991ed03ab720f1b2447_720w.jpg?source=1940ef5c",
+		AthleteID:          int(user.ID),
+		AthleteName:        user.Username,
+		Status:             data.Status,
+		Distance:           data.Distance,
+		InstantaneousSpeed: data.PotSpeed,
+		AverageSpeed:       data.AvguserSpeed,
+	}, nil
 }

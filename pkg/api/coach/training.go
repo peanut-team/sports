@@ -1,11 +1,11 @@
 package coach
 
-type SportsmanStatus string
+type SportsmanStatus int
 
 const (
-	SportsmanStatus_Training SportsmanStatus = "training" // 训练中
-	SportsmanStatus_Online   SportsmanStatus = "online"   // 在线
-	MatchType_Offline        SportsmanStatus = "offline"  // 离线
+	SportsmanStatus_Training SportsmanStatus = 2 // 训练中
+	SportsmanStatus_Online   SportsmanStatus = 1 // 在线
+	MatchType_Offline        SportsmanStatus = 0 // 离线
 )
 
 type AthleteTrainingList []*AthleteTraining
@@ -15,9 +15,9 @@ type AthleteTraining struct {
 	AthleteID                   int             `json:"athlete_id"`                    // 运动员ID
 	AthleteName                 string          `json:"athlete_name"`                  // 运动员姓名
 	Status                      SportsmanStatus `json:"status"`                        // 当前状态
-	Distance                    float64         `json:"distance"`                      // 距离（路程）
-	InstantaneousSpeed          float64         `json:"instantaneous_speed"`           // 瞬时时速
-	AverageSpeed                float64         `json:"average_speed"`                 // 平均时速
+	Distance                    float64         `json:"distance"`                      // 学员训练距离，单位：m
+	InstantaneousSpeed          float64         `json:"instantaneous_speed"`           // 加速度，单位：m/s2（米每二次方秒）
+	AverageSpeed                float64         `json:"average_speed"`                 // 平均时速,平均速度，单位：m/s
 	TotalOars                   int32           `json:"total_oars"`                    // 总桨数
 	InstantaneousPropellerSpeed float64         `json:"instantaneous_propeller_speed"` // 瞬时桨速
 	Stroke                      float64         `json:"stroke"`                        // 划行距离

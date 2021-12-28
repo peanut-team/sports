@@ -2,15 +2,11 @@ package notifier
 
 import (
 	"flag"
-	"regexp"
 )
 
 var (
 	rabbit   = flag.String("rabbit", "amqp://root:maxwit2021@121.199.27.6:5672/", "AMQP URI")
-	exchange = flag.String("exchange", "notifications", "Durable, non-auto-deleted AMQP exchange name")
-	routing  = flag.String("routing key", "test.*", "Routing key for queue")
-	queue    = flag.String("queue", "notifications", "Queue name")
-	re       = regexp.MustCompile("test.(\\d+)")
+	exchange = flag.String("exchange", "canoe_exchange", "Durable, non-auto-deleted AMQP exchange name")
 	registry *Registry
 )
 

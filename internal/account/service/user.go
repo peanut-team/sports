@@ -10,7 +10,7 @@ import (
 	"sports/pkg/utils"
 )
 
-func GetUser(id int32) (*account.User, error) {
+func GetUser(id int) (*account.User, error) {
 	user := &model.User{}
 	err := ctr.DB().Where("id = ?", id).First(user).Error
 	if err != nil {

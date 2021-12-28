@@ -20,10 +20,23 @@ var password = "maxwit2021"
 var host = "121.199.27.6"
 var port = "5672"
 
+var (
+	cRouting = "game_user_data_upload_route"
+	cQueue   = "game_user_data_upload_queue"
+)
+
+
+type UploadData struct {
+	UserId       int                   `json:"userId"`       // 用户ID
+	Status       coach.SportsmanStatus `json:"status"`       // 离线：0，在线：1，训练中：2
+	Distance     float64               `json:"distance"`     // 学员训练距离，单位：m
+	PotSpeed     float64               `json:"spotSpeed"`    // 加速度，单位：m/s2（米每二次方秒）
+	AvguserSpeed float64               `json:"avguserSpeed"` // 平均速度，单位：m/s
+	NotifyTime   int64                 `json:"notifyTime"`   // 开始时间
+}
+
 func TestPub(t *testing.T) {
-	var exchange = flag.String("exchange", "notifications", "Durable, non-auto-deleted AMQP exchange name")
-	var routing  = flag.String("routing key", "test.*", "Routing key for queue")
-	var queue    = flag.String("queue", "notifications", "Queue name")
+	var exchange = flag.String("exchange", "canoe_exchange", "Durable, non-auto-deleted AMQP exchange name")
 
 	// 1. 尝试连接RabbitMQ，建立连接
 	// 该连接抽象了套接字连接，并为我们处理协议版本协商和认证等。
@@ -40,25 +53,9 @@ func TestPub(t *testing.T) {
 		log.Fatalf("Failed to open a channel: %v", err)
 		return
 	}
-	err = ch.ExchangeDeclare(*exchange, "topic", false, false, false, false, nil)
-	assert.NoError(t, err)
-
 
 	defer ch.Close()
-	// 3. 声明消息要发送到的队列
-	q, err := ch.QueueDeclare(
-		*queue, // name
-		false,           // durable
-		false,           // delete when unused
-		false,           // exclusive
-		false,           // no-wait
-		nil,             // arguments
-	)
-	if err != nil {
-		log.Fatalf("Failed to declare a queue: %v", err)
-		return
-	}
-	err = ch.QueueBind(q.Name, *routing, *exchange, false, nil)
+
 	assert.NoError(t, err)
 
 	// 用来接收命令行的终止信号
@@ -72,25 +69,17 @@ func TestPub(t *testing.T) {
 	for {
 		select {
 		case _ = <-ticker.C:
-			aa := []int{1,2,3}
+			aa := []int{1,2,4}
 			for _, a := range aa {
 				// 向服务端发送message
 				t := rand.Intn(100)
-				d := a * 10
-				data := &coach.AthleteTraining{
-					StartTime: now + int64(d),
-					SportImg:                    "https://pic1.zhimg.com/80/v2-6c5ff4ef0bb78991ed03ab720f1b2447_720w.jpg?source=1940ef5c",
-					AthleteID:                   a,
-					AthleteName:                 fmt.Sprintf("test-%d", a),
-					Status:                      coach.SportsmanStatus_Online,
-					Distance:                    10.1 + float64(t),
-					InstantaneousSpeed:          39.33 + float64(t),
-					AverageSpeed:                56.8 + float64(t),
-					TotalOars:                   5 + int32(t),
-					InstantaneousPropellerSpeed: 34 + float64(t),
-					Stroke:                      66.3 + float64(t),
-					Acceleration:                1.5 + float64(t),
-					TrainingStatus:              true,
+				data := &UploadData{
+					UserId:       a,
+					Status:       coach.SportsmanStatus_Online,
+					Distance:     10.1 + float64(t),
+					PotSpeed:     44.1 + float64(t),
+					AvguserSpeed: 22.1 + float64(t),
+					NotifyTime:   now,
 				}
 
 
@@ -98,7 +87,7 @@ func TestPub(t *testing.T) {
 				// 4.将消息发布到声明的队列
 				err = ch.Publish(
 					*exchange,     // exchange
-					"test.1", // routing key
+					cRouting, // routing key
 					false,  // mandatory
 					false,  // immediate
 					amqp.Publishing{

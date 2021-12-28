@@ -26,7 +26,7 @@ func NewUserConnection(ws *websocket.Conn) (*UserConnection, error) {
 }
 
 // Send method deliver message on websocket
-func (u *UserConnection) Send(data []*coach.AthleteTraining) {
+func (u *UserConnection) Send(data []coach.AthleteTraining) {
 	msg, err := json.Marshal(data)
 	if err != nil {
 		logger.Error("Failed Marshal AthleteTraining %v: %v", data, msg)
@@ -43,15 +43,18 @@ func (u *UserConnection) Listen() {
 	}()
 
 	for {
-		_, _, err := u.ws.ReadMessage()
+		_, wsMsg, err := u.ws.ReadMessage()
 		if err != nil {
 			logger.Errorf("user connection read err: %v ", err)
 			break
 		}
+		if wsMsg != nil {
+			logger.Infof("get ws msg: %s", wsMsg)
+		}
+
 		if u.trainingDate == nil {
 			u.trainingDate = make(map[int]*coach.AthleteTraining)
-
 		}
-		registry.Register(u)
+		registry.Register(u, wsMsg)
 	}
 }

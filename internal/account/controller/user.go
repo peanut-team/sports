@@ -32,7 +32,7 @@ func GetUser(c *gin.Context) {
 		return
 	}
 
-	result, err := service.GetUser(int32(id))
+	result, err := service.GetUser(int(id))
 	if err != nil {
 		ctr.Err(c, err)
 		return
@@ -237,7 +237,7 @@ func GetUserByToken(ctx *gin.Context) {
 		user = u
 	}
 
-	result, err := service.GetUser(user)
+	result, err := service.GetUser(int(user))
 	if err != nil {
 		ctr.Err(ctx, err)
 		return

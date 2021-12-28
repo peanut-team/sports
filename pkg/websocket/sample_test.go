@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
-	"sports/pkg/api/coach"
+	"sports/pkg/notifier"
 	"testing"
 	"time"
 )
@@ -53,6 +53,18 @@ func Test_client(t *testing.T) {
 		}
 	}()
 
+	// 向服务端发送message
+	data := &notifier.StartTopic{
+		NotifyTime: 123450,
+		Status: 1,
+	}
+	msg, err := json.Marshal(data)
+	err = c.WriteMessage(websocket.TextMessage, msg)
+	if err != nil {
+		log.Println("write:", err)
+		return
+	}
+
 	ticker := time.NewTicker(time.Second)
 	defer ticker.Stop()
 
@@ -60,25 +72,6 @@ func Test_client(t *testing.T) {
 		select {
 		case <-done:
 			return
-		case _ = <-ticker.C:
-			// 向服务端发送message
-			data := []*coach.AthleteTraining{
-				{
-					AthleteID: 1,
-				},
-				{
-					AthleteID: 2,
-				},
-				{
-					AthleteID: 3,
-				},
-			}
-			msg, err := json.Marshal(data)
-			err = c.WriteMessage(websocket.TextMessage, msg)
-			if err != nil {
-				log.Println("write:", err)
-				return
-			}
 		case <-interrupt:
 			log.Println("interrupt")
 			// 收到命令行终止信号，通过发送close message关闭连接。
@@ -107,9 +100,8 @@ func Test_client_2(t *testing.T) {
 	signal.Notify(interrupt, os.Interrupt)
 
 	// 和服务端建立连接
-	u := url.URL{Scheme: "ws", Host: *addr, Path: "/api/v1/coach/training"}
+	u := url.URL{Scheme: "ws", Host: *addr, Path: "/api/v1/coach/training", RawQuery: "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyIjp7ImlkIjoxLCJ1c2VybmFtZSI6IiJ9fQ.rA0c4qGnhAeD6pirAPu9JALgr55Qbz0C52LdF0h5gGU"}
 	log.Printf("connecting to %s", u.String())
-
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
 		log.Fatal("dial:", err)
@@ -130,7 +122,6 @@ func Test_client_2(t *testing.T) {
 			log.Printf("recv: %s", message)
 		}
 	}()
-
 	ticker := time.NewTicker(time.Second)
 	defer ticker.Stop()
 
@@ -138,25 +129,6 @@ func Test_client_2(t *testing.T) {
 		select {
 		case <-done:
 			return
-		case _ = <-ticker.C:
-			// 向服务端发送message
-			data := []*coach.AthleteTraining{
-				{
-					AthleteID: 1,
-				},
-				{
-					AthleteID: 2,
-				},
-				{
-					AthleteID: 3,
-				},
-			}
-			msg, err := json.Marshal(data)
-			err = c.WriteMessage(websocket.TextMessage, msg)
-			if err != nil {
-				log.Println("write:", err)
-				return
-			}
 		case <-interrupt:
 			log.Println("interrupt")
 			// 收到命令行终止信号，通过发送close message关闭连接。

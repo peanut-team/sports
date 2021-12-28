@@ -389,11 +389,11 @@ var doc = `{
                     "type": "boolean"
                 },
                 "average_speed": {
-                    "description": "平均时速",
+                    "description": "平均时速,平均速度，单位：m/s",
                     "type": "number"
                 },
                 "distance": {
-                    "description": "距离（路程）",
+                    "description": "学员训练距离，单位：m",
                     "type": "number"
                 },
                 "instantaneous_propeller_speed": {
@@ -401,16 +401,20 @@ var doc = `{
                     "type": "number"
                 },
                 "instantaneous_speed": {
-                    "description": "瞬时时速",
+                    "description": "加速度，单位：m/s2（米每二次方秒）",
                     "type": "number"
                 },
                 "sport_img": {
                     "description": "运动员头像",
                     "type": "string"
                 },
+                "start_time": {
+                    "description": "运动员开始运动的时间戳",
+                    "type": "integer"
+                },
                 "status": {
                     "description": "当前状态",
-                    "type": "string"
+                    "type": "integer"
                 },
                 "stroke": {
                     "description": "划行距离",
