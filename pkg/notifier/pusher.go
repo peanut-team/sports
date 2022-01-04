@@ -46,17 +46,17 @@ func (c *Pusher) publishMessages(msg *StartTopic) {
 
 	pMsg, err := json.Marshal(msg)
 	if err != nil {
-		logger.Errorf("pub failed, object [%v], err: %v", msg, err)
+		logger.Errorf("pub failed, object [%+v], err: %v", msg, err)
 	}
 	channel.Publish(*exchange, pubRouting, false, false, amqp.Publishing{
 		Headers:         amqp.Table{},
-		ContentType:     "text/plain",
+		//ContentType:     "text/plain",
 		ContentEncoding: "",
 		Body:            pMsg,
 		DeliveryMode:    amqp.Transient,
 		Priority:        0,
 	})
-	logger.Infof("Pub Start Msg: %v", msg)
+	logger.Infof("Pub Start Msg: %+v", msg)
 }
 
 // GetChannel returns new AMQP channel

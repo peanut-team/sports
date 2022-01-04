@@ -53,9 +53,10 @@ func Test_client(t *testing.T) {
 		}
 	}()
 
+	tt := time.Now().Unix()
 	// 向服务端发送message
 	data := &notifier.StartTopic{
-		NotifyTime: 123450,
+		NotifyTime: tt,
 		Status: 1,
 	}
 	msg, err := json.Marshal(data)

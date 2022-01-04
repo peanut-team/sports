@@ -69,13 +69,13 @@ func TestPub(t *testing.T) {
 	for {
 		select {
 		case _ = <-ticker.C:
-			aa := []int{1,2,4}
+			aa := []int{1}
 			for _, a := range aa {
 				// 向服务端发送message
 				t := rand.Intn(100)
 				data := &UploadData{
 					UserId:       a,
-					Status:       coach.SportsmanStatus_Online,
+					Status:       coach.MatchType_Offline,
 					Distance:     10.1 + float64(t),
 					PotSpeed:     44.1 + float64(t),
 					AvguserSpeed: 22.1 + float64(t),

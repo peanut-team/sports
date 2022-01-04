@@ -7,6 +7,7 @@ import (
 	"sports/internal/account/service"
 	"sports/pkg/api/coach"
 	"sports/pkg/logger"
+	"strconv"
 )
 
 var (
@@ -87,7 +88,8 @@ func ParseMessage(message amqp.Delivery) (*coach.AthleteTraining, error) {
 	if err != nil {
 		return nil, err
 	}
-	if source.UserId == 0 {
+
+	if source.UserId == "" {
 		return nil, nil
 	}
 	// trans model
@@ -97,7 +99,7 @@ func ParseMessage(message amqp.Delivery) (*coach.AthleteTraining, error) {
 }
 
 type UploadData struct {
-	UserId       int                   `json:"userId"`       // 用户ID
+	UserId       string                `json:"userId"`       // 用户ID
 	Status       coach.SportsmanStatus `json:"status"`       // 离线：0，在线：1，训练中：2
 	Distance     float64               `json:"distance"`     // 学员训练距离，单位：m
 	PotSpeed     float64               `json:"spotSpeed"`    // 加速度，单位：m/s2（米每二次方秒）
@@ -106,8 +108,15 @@ type UploadData struct {
 }
 
 func NewAthleteTraining(data *UploadData) (*coach.AthleteTraining, error) {
+	// userId
+	id, err := strconv.ParseInt(data.UserId, 10, 64)
+	if err != nil {
+		logger.Warnf("invalid userId: %s, err %v", data.UserId, err)
+		return nil, err
+	}
+
 	// query user info
-	user, err := service.GetUser(data.UserId)
+	user, err := service.GetUser(int(id))
 	if err != nil {
 		return nil, fmt.Errorf("can not fetch user[%d], err: %v", data.UserId, err)
 	}
